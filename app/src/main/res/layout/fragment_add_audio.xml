@@ -1,0 +1,49 @@
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:weightSum="1">
+
+    <SeekBar
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="150dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Play"
+            android:id="@+id/button3"
+            android:layout_marginTop="25dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="25dp" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Add to Stream"
+            android:id="@+id/button4"
+            android:layout_marginTop="25dp"
+            android:layout_weight="1"
+            android:layout_marginRight="25dp" />
+    </LinearLayout>
+
+    <Button
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:text="Record"
+        android:id="@+id/button5"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.30"
+        android:layout_marginTop="125dp" />
+
+</LinearLayout>

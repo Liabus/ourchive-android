@@ -33,7 +33,7 @@ public class AudioRecordTest extends Activity {
             startRecording();
         }
         else {
-            stopRecording();
+            //stopRecording();
         }
     }
 

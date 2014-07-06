@@ -1,4 +1,4 @@
-package com.liabus.newexperiment;
+package com.liabus.ourchive;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,11 +13,11 @@ import android.view.ViewGroup;
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * to handle interaction events.
- * Use the {@link AllEvents#newInstance} factory method to
+ * Use the {@link NewEvent#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class AllEvents extends Fragment {
+public class NewEvent extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -33,18 +33,18 @@ public class AllEvents extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment AllEvents.
+     * @return A new instance of fragment NewEvent.
      */
     // TODO: Rename and change types and number of parameters
-    public static AllEvents newInstance(String param1, String param2) {
-        AllEvents fragment = new AllEvents();
+    public static NewEvent newInstance(String param1, String param2) {
+        NewEvent fragment = new NewEvent();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-    public AllEvents() {
+    public NewEvent() {
         // Required empty public constructor
     }
 
@@ -61,7 +61,7 @@ public class AllEvents extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_all_events, container, false);
+        return inflater.inflate(R.layout.fragment_new_event, container, false);
     }
 
     @Override

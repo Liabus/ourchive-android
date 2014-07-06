@@ -1,4 +1,4 @@
-package com.liabus.newexperiment;
+package com.liabus.ourchive;
 
 
 import android.app.Activity;
@@ -22,6 +22,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
@@ -44,6 +47,8 @@ public class NavigationDrawerFragment extends Fragment {
      * A pointer to the current callbacks instance (the Activity).
      */
     private NavigationDrawerCallbacks mCallbacks;
+
+    private Stack<Integer> positionStack = new Stack<Integer>();
 
     /**
      * Helper component that ties the action bar to the navigation drawer.
@@ -194,10 +199,27 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
+    //Perform menu selection without calling the callback:
+    public void popItem(){
+        if(positionStack.empty() || positionStack.size() == 1){
+            //TODO: Implement empty
+            return;
+        }
+
+        positionStack.pop();
+
+        mCurrentSelectedPosition = positionStack.peek();
+        if (mDrawerListView != null) {
+            mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+        }
+        if(mCallbacks != null) {
+            mCallbacks.onNavigationDrawerBack(mCurrentSelectedPosition);
+        }
+    }
+
     public void selectItem(int position) {
-
-
         mCurrentSelectedPosition = position;
+        positionStack.push(position);
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
         }
@@ -254,12 +276,12 @@ public class NavigationDrawerFragment extends Fragment {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
+        /*
         if (item.getItemId() == R.id.action_example) {
             Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
             return true;
         }
-
+        */
         return super.onOptionsItemSelected(item);
     }
 
@@ -286,5 +308,6 @@ public class NavigationDrawerFragment extends Fragment {
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(int position);
+        void onNavigationDrawerBack(int position);
     }
 }

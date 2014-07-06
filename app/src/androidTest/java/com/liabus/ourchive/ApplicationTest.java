@@ -1,4 +1,4 @@
-package com.liabus.newexperiment;
+package com.liabus.ourchive;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

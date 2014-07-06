@@ -1,4 +1,4 @@
-package com.liabus.newexperiment;
+package com.liabus.ourchive;
 
 import android.app.Activity;
 
@@ -6,12 +6,10 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
-import android.widget.ListView;
 
 
 public class Home extends Activity
@@ -34,7 +32,9 @@ public class Home extends Activity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
+
+        //Start at home:
+        mTitle = "Home";
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -47,15 +47,39 @@ public class Home extends Activity
     }
 
     @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        mNavigationDrawerFragment.popItem();
+    }
+
+    private boolean started = false;
+
+    @Override
     public void onNavigationDrawerItemSelected(int position) {
 
         // update the main content by replacing fragments
         Fragment fragment = onSectionAttached(position);
 
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
+
+        if(!started){
+            started = true;
+            fragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit();
+        }else{
+            fragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .addToBackStack((String)mTitle)
+                .commit();
+        }
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setTitle(mTitle);
+    }
+
+    public void onNavigationDrawerBack(int position) {
+        onSectionAttached(position);
 
         ActionBar actionBar = getActionBar();
         actionBar.setTitle(mTitle);
@@ -73,7 +97,7 @@ public class Home extends Activity
                 frag = new MyOurchive();
                 break;
             case 2:
-                mTitle = "Photo";
+                mTitle = "Photos";
                 frag = new AddPhoto();
                 break;
             case 3:
@@ -135,14 +159,6 @@ public class Home extends Activity
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void addAudioButton(View v) {
-        Fragment fragment = new AddAudio();
-        FragmentManager fm = getFragmentManager();
-        fm.beginTransaction()
-                .replace(R.id.container, fragment)
-                .commit();
     }
 
 }

@@ -1,6 +1,8 @@
 package com.liabus.ourchive;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Camera;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -44,8 +46,10 @@ public class AddPhoto extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
     public AddPhoto() {
         // Required empty public constructor
+
     }
 
     @Override
@@ -55,6 +59,10 @@ public class AddPhoto extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        //Start up camera:
+        Intent i = new Intent(getActivity(), CameraActivity.class);
+        startActivity(i);
     }
 
     @Override

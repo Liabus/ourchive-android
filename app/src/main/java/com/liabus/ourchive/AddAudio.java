@@ -1,11 +1,21 @@
 package com.liabus.ourchive;
 
 import android.app.Activity;
+import android.widget.LinearLayout;
+import android.os.Environment;
+import android.widget.Button;
+import android.view.View.OnClickListener;
+import android.content.Context;
+import android.util.Log;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.media.MediaRecorder;
+import android.media.MediaPlayer;
+
+import java.io.IOException;
 
 
 
@@ -17,6 +27,7 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  *
  */
+
 public class AddAudio extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

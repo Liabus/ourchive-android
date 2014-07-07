@@ -68,11 +68,59 @@ public class AddAudio extends Fragment {
         }
     }
 
+    private boolean isRecording = false;
+
+    private boolean isPlaying = false;
+
+    private OnClickListener recordPressed = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!isRecording) {
+                AudioRecordTest.startRecording();
+                isRecording = true;
+            }
+            else {
+                AudioRecordTest.stopRecording();
+                isRecording = false;
+            }
+        }
+    };
+
+    private OnClickListener addStreamPressed = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
+    private OnClickListener playPressed = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!isPlaying) {
+                AudioRecordTest.startPlaying();
+                isPlaying = true;
+            }
+            else {
+                AudioRecordTest.stopPlaying();
+                isPlaying = false;
+            }
+        }
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_audio, container, false);
+        View root = inflater.inflate(R.layout.fragment_add_audio, container, false);
+
+        Button recordBtn = (Button) root.findViewById(R.id.record_btn);
+        Button addStreamBtn = (Button) root.findViewById(R.id.add_stream_btn);
+        Button playBtn = (Button) root.findViewById(R.id.play_btn);
+
+        recordBtn.setOnClickListener(recordPressed);
+        addStreamBtn.setOnClickListener(addStreamPressed);
+        playBtn.setOnClickListener(playPressed);
+
+        return root;
     }
 
     @Override

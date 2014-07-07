@@ -1,6 +1,7 @@
 package com.liabus.ourchive;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.widget.LinearLayout;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,103 +19,55 @@ import java.io.IOException;
 /**
  * Created by jack on 7/5/14.
  */
-public class AudioRecordTest extends Activity {
-    private static final String LOG_TAG = "AudioRecordTest";
-    private static String mFileName = null;
 
-    private RecordButton mRecordButton = null;
-    private MediaRecorder mRecorder = null;
+public class AudioRecordTest
+{
+    public static final String LOG_TAG = "AudioRecordTest";
+    public static String mFileName = null;
+    public static MediaRecorder mRecorder = null;
+    public static MediaPlayer   mPlayer = null;
 
-    private PlayButton mPlayButton = null;
-    private MediaPlayer mPlayer = null;
-
-    private void onRecord(boolean start) {
-        if (start) {
-            startRecording();
-        }
-        else {
-            stopRecording();
-        }
-    }
-
-    private void onPlay(boolean start) {
-        if (start) {
-            startPlaying();
-        }
-        else {
-            stopPlaying();
-        }
-    }
-
-    private void startPlaying() {
+    public static void startPlaying() {
         mPlayer = new MediaPlayer();
         try {
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
             mPlayer.start();
-        }
-        catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "play prepare() failed");
         }
     }
 
-    private void stopPlaying() {
+    public static void stopPlaying() {
         mPlayer.release();
         mPlayer = null;
     }
 
-    private void startRecording() {
+    public static void startRecording() {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            mRecorder.prepare();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "record prepare() failed");
+        }
+
+        mRecorder.start();
     }
 
-    class RecordButton extends Button {
-        boolean mStartRecording = true;
-
-        OnClickListener clicker = new OnClickListener() {
-            public void onClick(View v) {
-                onRecord(mStartRecording);
-                if (mStartRecording) {
-                    setText("Stop Recording");
-                }
-                else {
-                    setText("Start Recording");
-                }
-                mStartRecording = !mStartRecording;
-            }
-        };
-
-        public RecordButton(Context ctx) {
-            super(ctx);
-            setText("Start Recording");
-            setOnClickListener(clicker);
-        }
+    public static void stopRecording() {
+        mRecorder.stop();
+        mRecorder.release();
+        mRecorder = null;
     }
 
-    class PlayButton extends Button {
-        boolean mStartPlaying = true;
-
-        OnClickListener clicker = new OnClickListener() {
-            public void onClick(View v) {
-                onPlay(mStartPlaying);
-                if (mStartPlaying) {
-                    setText("Stop Playing");
-                }
-                else {
-                    setText("Start Playing");
-                }
-                mStartPlaying = !mStartPlaying;
-            }
-        };
-
-        public PlayButton(Context ctx) {
-            super(ctx);
-            setText("Start playing");
-            setOnClickListener(clicker);
-        }
+    public AudioRecordTest() {
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName += "/audiorecordtest.3gp";
     }
 
 }

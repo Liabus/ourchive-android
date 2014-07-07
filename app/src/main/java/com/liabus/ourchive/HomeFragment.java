@@ -70,15 +70,6 @@ public class HomeFragment extends Fragment {
         }
     };
 
-    private OnClickListener photoLauncher = new OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            //Start up camera:
-            Intent i = new Intent(getActivity(), CameraActivity.class);
-            startActivityForResult(i, 723);
-        }
-    };
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +86,7 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         Button photoButton = (Button) root.findViewById(R.id.add_photo_btn);
-        photoButton.setOnClickListener(photoLauncher);
+        photoButton.setOnClickListener(fragmentSwap);
 
         Button audioButton = (Button) root.findViewById(R.id.add_audio_btn);
         audioButton.setOnClickListener(fragmentSwap);
@@ -108,15 +99,6 @@ public class HomeFragment extends Fragment {
 
         return root;
 
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(requestCode) {
-            case 723:
-                System.out.println(resultCode);
-                break;
-        }
     }
 
 

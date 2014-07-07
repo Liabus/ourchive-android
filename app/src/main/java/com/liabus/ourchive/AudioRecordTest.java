@@ -22,12 +22,21 @@ import java.io.IOException;
 
 public class AudioRecordTest
 {
-    public static final String LOG_TAG = "AudioRecordTest";
-    public static String mFileName = null;
-    public static MediaRecorder mRecorder = null;
-    public static MediaPlayer   mPlayer = null;
+    public final String LOG_TAG = "AudioRecordTest";
+    public String mFileName = null;
+    public MediaRecorder mRecorder = null;
+    public MediaPlayer mPlayer = null;
 
-    public static void startPlaying() {
+    private boolean recording = false;
+
+    public boolean isPlaying(){
+        return mPlayer.isPlaying();
+    }
+    public boolean isRecording(){
+        return recording;
+    }
+
+    public void startPlaying() {
 
         mPlayer = new MediaPlayer();
         try {
@@ -39,12 +48,12 @@ public class AudioRecordTest
         }
     }
 
-    public static void stopPlaying() {
+    public void stopPlaying() {
         mPlayer.release();
         mPlayer = null;
     }
 
-    public static void startRecording() {
+    public void startRecording() {
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/audiorecordtest.3gp";
 
@@ -63,7 +72,7 @@ public class AudioRecordTest
         mRecorder.start();
     }
 
-    public static void stopRecording() {
+    public void stopRecording() {
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;

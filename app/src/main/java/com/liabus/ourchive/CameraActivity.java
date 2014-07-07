@@ -1,5 +1,6 @@
 package com.liabus.ourchive;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -7,19 +8,31 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.liabus.ourchive.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -32,6 +45,8 @@ public class CameraActivity extends Activity {
     private Camera mCamera;
     private CameraPreview mPreview;
 
+    LinearLayout imageList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -39,6 +54,8 @@ public class CameraActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+        imageList = (LinearLayout) getWindow().findViewById(R.id.image_list);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -61,17 +78,56 @@ public class CameraActivity extends Activity {
 
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void shutterSound() {
+        mCamera.enableShutterSound(false);
+    }
+
     private void cameraSetup(){
         // Create an instance of Camera
         mCamera = getCameraInstance();
         if(mCamera != null) {
             mCamera.setDisplayOrientation(90);
 
+            //Set ORIENTATION
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, info);
+            int rotation = getWindowManager().getDefaultDisplay().getRotation();
+            int degrees = 0;
+            switch (rotation) {
+                case Surface.ROTATION_0: degrees = 0; break; //Natural orientation
+                case Surface.ROTATION_90: degrees = 90; break; //Landscape left
+                case Surface.ROTATION_180: degrees = 180; break;//Upside down
+                case Surface.ROTATION_270: degrees = 270; break;//Landscape right
+            }
+            int rotate = (info.orientation - degrees + 360) % 360;
+            Camera.Parameters params = mCamera.getParameters();
+            params.setRotation(rotate);
+            mCamera.setParameters(params);
+
+
+
+            shutterSound();
+
             // Create our Preview view and set it as the content of our activity.
             mPreview = new CameraPreview(this, mCamera);
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.removeAllViews();
             preview.addView(mPreview);
+        }
+    }
+
+    MediaPlayer _shootMP = null;
+    public void shootSound(){
+        AudioManager meng = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        int volume = meng.getStreamVolume( AudioManager.STREAM_NOTIFICATION);
+
+        if (volume != 0)
+        {
+            if (_shootMP == null)
+                _shootMP = MediaPlayer.create(this, Uri.parse("file:///system/media/audio/ui/camera_click.ogg"));
+            if (_shootMP != null)
+                _shootMP.start();
         }
     }
 
@@ -102,7 +158,7 @@ public class CameraActivity extends Activity {
 
     public void openGallery(View v){
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setAction(Intent.EXTRA_ALLOW_MULTIPLE);
+        photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, 100);
     }
 
@@ -122,7 +178,12 @@ public class CameraActivity extends Activity {
 
     public void takePicture(View v){
 
-        mCamera.takePicture(null, null, mPicture);
+        mCamera.takePicture(new Camera.ShutterCallback() {
+            @Override
+            public void onShutter() {
+                shootSound();
+            }
+        }, null, mPicture);
     }
 
     public void flashClicked(View v){
@@ -192,7 +253,7 @@ public class CameraActivity extends Activity {
 
             File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
             if (pictureFile == null){
-                //Log.d(TAG, "Error creating media file, check storage permissions: " + e.getMessage());
+                System.out.println("Error creating media file, check storage permissions: ");
                 return;
             }
 
@@ -200,14 +261,31 @@ public class CameraActivity extends Activity {
                 FileOutputStream fos = new FileOutputStream(pictureFile);
                 fos.write(data);
                 fos.close();
+
+                //Tell the file system to rescan the new file:
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + pictureFile.getAbsolutePath())));
             } catch (FileNotFoundException e) {
-                //Log.d(TAG, "File not found: " + e.getMessage());
+                System.out.println("File not found: " + e.getMessage());
             } catch (IOException e) {
-                //Log.d(TAG, "Error accessing file: " + e.getMessage());
+                System.out.println("Error accessing file: " + e.getMessage());
             }
 
             //Restart preview:
             mCamera.startPreview();
+
+            //Insert image to list:
+            ImageView img = new ImageView(getBaseContext());
+
+            Bitmap myBitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath());
+            myBitmap = Bitmap.createScaledBitmap(myBitmap, 100, 100, false);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+            img.setImageBitmap(myBitmap);
+            img.setLayoutParams(new LinearLayout.LayoutParams(100, 100));
+            img.setPadding(10, 0, 10, 0);
+
+            imageList.addView(img);
         }
     };
 
@@ -216,7 +294,7 @@ public class CameraActivity extends Activity {
         // using Environment.getExternalStorageState() before doing this.
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+                Environment.DIRECTORY_PICTURES), "Ourchive");
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
 

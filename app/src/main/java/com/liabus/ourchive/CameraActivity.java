@@ -47,6 +47,17 @@ public class CameraActivity extends Activity {
 
     LinearLayout imageList;
 
+    private boolean canTake = false;
+
+    public void doneTaking(View v){
+        Bundle conData = new Bundle();
+        conData.putString("param_result", "Thanks Thanks");
+        Intent intent = new Intent();
+        intent.putExtras(conData);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -56,6 +67,13 @@ public class CameraActivity extends Activity {
         setContentView(R.layout.activity_camera);
 
         imageList = (LinearLayout) getWindow().findViewById(R.id.image_list);
+
+        imageList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                doneTaking(view);
+            }
+        });
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -114,6 +132,8 @@ public class CameraActivity extends Activity {
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.removeAllViews();
             preview.addView(mPreview);
+
+            canTake = true;
         }
     }
 
@@ -177,13 +197,15 @@ public class CameraActivity extends Activity {
     }
 
     public void takePicture(View v){
-
-        mCamera.takePicture(new Camera.ShutterCallback() {
-            @Override
-            public void onShutter() {
-                shootSound();
-            }
-        }, null, mPicture);
+        if(canTake) {
+            canTake = false;
+            mCamera.takePicture(new Camera.ShutterCallback() {
+                @Override
+                public void onShutter() {
+                    shootSound();
+                }
+            }, null, mPicture);
+        }
     }
 
     public void flashClicked(View v){
@@ -272,22 +294,46 @@ public class CameraActivity extends Activity {
 
             //Restart preview:
             mCamera.startPreview();
+            canTake = true;
 
             //Insert image to list:
             ImageView img = new ImageView(getBaseContext());
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
+            params.setMargins(10, 10, 10, 10);
+            img.setLayoutParams(params);
+            img.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             Bitmap myBitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath());
-            myBitmap = Bitmap.createScaledBitmap(myBitmap, 100, 100, false);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            myBitmap = scaleBitmap(myBitmap, 100);
 
             img.setImageBitmap(myBitmap);
-            img.setLayoutParams(new LinearLayout.LayoutParams(100, 100));
-            img.setPadding(10, 0, 10, 0);
 
             imageList.addView(img);
         }
     };
+
+    private Bitmap scaleBitmap(Bitmap bm, int max) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+
+        if (width > height) {
+            width = (int)(((double)width / (double)height) * max);
+            height = max;
+        } else if (height > width) {
+            height = (int)(((double)height / (double)width) * max);
+            width = max;
+        } else {
+            // square
+            height = max;
+            width = max;
+        }
+
+
+        bm = Bitmap.createScaledBitmap(bm, width, height, true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        return bm;
+    }
 
     private static File getOutputMediaFile(int type){
         // To be safe, you should check that the SDCard is mounted

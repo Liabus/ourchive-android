@@ -2,6 +2,7 @@ package com.liabus.ourchive;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,8 +67,15 @@ public class HomeFragment extends Fragment {
             else if(id == R.id.add_audio_btn){
                 ac.navigationDrawerHelper(5);
             }
+        }
+    };
 
-            //TODO: Move this logic to the activity and call a function on the activity to ensure that the core UI updates properly.
+    private OnClickListener photoLauncher = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //Start up camera:
+            Intent i = new Intent(getActivity(), CameraActivity.class);
+            startActivityForResult(i, 723);
         }
     };
 
@@ -87,7 +95,7 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         Button photoButton = (Button) root.findViewById(R.id.add_photo_btn);
-        photoButton.setOnClickListener(fragmentSwap);
+        photoButton.setOnClickListener(photoLauncher);
 
         Button audioButton = (Button) root.findViewById(R.id.add_audio_btn);
         audioButton.setOnClickListener(fragmentSwap);
@@ -100,6 +108,15 @@ public class HomeFragment extends Fragment {
 
         return root;
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case 723:
+                System.out.println(resultCode);
+                break;
+        }
     }
 
 

@@ -5,11 +5,14 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
+
+import java.util.ArrayList;
 
 
 public class Home extends Activity
@@ -46,6 +49,12 @@ public class Home extends Activity
         mNavigationDrawerFragment.selectItem(position);
     }
 
+    //Allow fragments to go back:
+    public void gracefulBack(){
+        getFragmentManager().popBackStack();
+        mNavigationDrawerFragment.popItem();
+    }
+
     @Override
     public void onBackPressed(){
         super.onBackPressed();
@@ -59,6 +68,7 @@ public class Home extends Activity
 
         // update the main content by replacing fragments
         Fragment fragment = onSectionAttached(position);
+        if(fragment == null) return;
 
         FragmentManager fragmentManager = getFragmentManager();
 
@@ -79,6 +89,7 @@ public class Home extends Activity
     }
 
     public void onNavigationDrawerBack(int position) {
+        //Update title bar:
         onSectionAttached(position);
 
         ActionBar actionBar = getActionBar();
@@ -96,9 +107,17 @@ public class Home extends Activity
                 mTitle = "My Ourchive";
                 frag = new MyOurchive();
                 break;
+            //Photo Launcher:
             case 2:
+                photoLauncher();
+                frag = null;
+                break;
+            //When Photo Launcher Completes:
+            case 200:
                 mTitle = "Photos";
-                frag = new AddPhoto();
+                frag = AddPhoto.newInstance(listCache);
+                //Dereference listCache for GC:
+                listCache = null;
                 break;
             case 3:
                 mTitle = "Video";
@@ -126,6 +145,30 @@ public class Home extends Activity
                 break;
         }
         return frag;
+    }
+
+    public void photoLauncher(){
+        //Start up camera:
+        Intent i = new Intent(this, CameraActivity.class);
+        startActivityForResult(i, 723);
+    }
+
+    //We keep a cache so we can pass things around easily:
+    ArrayList<String> listCache = null;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            //Photo Launcher:
+            case 723:
+                if(resultCode == RESULT_OK) {
+                    listCache = data.getStringArrayListExtra("photos");
+                    onNavigationDrawerItemSelected(200);
+                }else{
+                    mNavigationDrawerFragment.popItem();
+                }
+                break;
+        }
     }
 
     public void restoreActionBar() {

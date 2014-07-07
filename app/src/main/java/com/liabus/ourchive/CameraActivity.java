@@ -38,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class CameraActivity extends Activity {
@@ -45,17 +46,21 @@ public class CameraActivity extends Activity {
     private Camera mCamera;
     private CameraPreview mPreview;
 
+    ArrayList<String> takenPhotos = new ArrayList<String>();
+
     LinearLayout imageList;
 
     private boolean canTake = false;
 
     public void doneTaking(View v){
-        Bundle conData = new Bundle();
-        conData.putString("param_result", "Thanks Thanks");
-        Intent intent = new Intent();
-        intent.putExtras(conData);
-        setResult(RESULT_OK, intent);
-        finish();
+        if(takenPhotos.size() > 0) {
+            Bundle conData = new Bundle();
+            conData.putStringArrayList("photos", takenPhotos);
+            Intent intent = new Intent();
+            intent.putExtras(conData);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
     }
 
     @Override
@@ -82,11 +87,19 @@ public class CameraActivity extends Activity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Camera Not Found")
                 .setMessage("The device's camera could not be found. Please try closing the app and trying again.")
-                .setPositiveButton("", new DialogInterface.OnClickListener() {
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //GO back
+                        //Go back
+                        finish();
                     }
                 });
+            builder.setCancelable(true);
+            builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialogInterface) {
+                    finish();
+                }
+            });
             // Create the AlertDialog object and return it
             builder.show();
             return;
@@ -97,7 +110,7 @@ public class CameraActivity extends Activity {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private void shutterSound() {
+    private void setupShutterSound() {
         mCamera.enableShutterSound(false);
     }
 
@@ -121,17 +134,27 @@ public class CameraActivity extends Activity {
             int rotate = (info.orientation - degrees + 360) % 360;
             Camera.Parameters params = mCamera.getParameters();
             params.setRotation(rotate);
+            params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
             mCamera.setParameters(params);
 
-
-
-            shutterSound();
+            setupShutterSound();
 
             // Create our Preview view and set it as the content of our activity.
             mPreview = new CameraPreview(this, mCamera);
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.removeAllViews();
             preview.addView(mPreview);
+            preview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mCamera.autoFocus(new Camera.AutoFocusCallback() {
+                        @Override
+                        public void onAutoFocus(boolean b, Camera camera) {
+                            //Do Nothing.
+                        }
+                    });
+                }
+            });
 
             canTake = true;
         }
@@ -174,7 +197,7 @@ public class CameraActivity extends Activity {
         }
     }
 
-    int flashMode = 0;
+    int flashMode = 2;
 
     public void openGallery(View v){
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
@@ -286,6 +309,22 @@ public class CameraActivity extends Activity {
 
                 //Tell the file system to rescan the new file:
                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + pictureFile.getAbsolutePath())));
+
+                //Insert image to list:
+                ImageView img = new ImageView(getBaseContext());
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
+                params.setMargins(10, 10, 10, 10);
+                img.setLayoutParams(params);
+                img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                Bitmap myBitmap = PhotoUtils.getThumbnailFromUrl(pictureFile.getAbsolutePath(), 100);
+
+                img.setImageBitmap(myBitmap);
+
+                imageList.addView(img);
+
+                //Add photos:
+                takenPhotos.add(pictureFile.getAbsolutePath());
             } catch (FileNotFoundException e) {
                 System.out.println("File not found: " + e.getMessage());
             } catch (IOException e) {
@@ -295,45 +334,8 @@ public class CameraActivity extends Activity {
             //Restart preview:
             mCamera.startPreview();
             canTake = true;
-
-            //Insert image to list:
-            ImageView img = new ImageView(getBaseContext());
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
-            params.setMargins(10, 10, 10, 10);
-            img.setLayoutParams(params);
-            img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-            Bitmap myBitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath());
-            myBitmap = scaleBitmap(myBitmap, 100);
-
-            img.setImageBitmap(myBitmap);
-
-            imageList.addView(img);
         }
     };
-
-    private Bitmap scaleBitmap(Bitmap bm, int max) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-
-        if (width > height) {
-            width = (int)(((double)width / (double)height) * max);
-            height = max;
-        } else if (height > width) {
-            height = (int)(((double)height / (double)width) * max);
-            width = max;
-        } else {
-            // square
-            height = max;
-            width = max;
-        }
-
-
-        bm = Bitmap.createScaledBitmap(bm, width, height, true);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        return bm;
-    }
 
     private static File getOutputMediaFile(int type){
         // To be safe, you should check that the SDCard is mounted

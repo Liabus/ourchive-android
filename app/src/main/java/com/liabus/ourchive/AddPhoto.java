@@ -1,14 +1,18 @@
 package com.liabus.ourchive;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Camera;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import java.util.ArrayList;
 
 
 /**
@@ -21,21 +25,45 @@ import android.view.ViewGroup;
  */
 public class AddPhoto extends Fragment {
 
-    public AddPhoto() {
-        // Required empty public constructor
+    private static final String ARG_PARAM1 = "photos";
 
+    private ArrayList<String> photos;
+
+    public static AddPhoto newInstance(ArrayList<String> photosParam) {
+        AddPhoto fragment = new AddPhoto();
+        Bundle args = new Bundle();
+        args.putStringArrayList(ARG_PARAM1, photosParam);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public AddPhoto(){
+        // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            photos = getArguments().getStringArrayList(ARG_PARAM1);
+            if(photos.size() == 0){
+                //No photos, get out of here:
+                ((Home)getActivity()).gracefulBack();
+            }
+        }else{
+            ((Home)getActivity()).gracefulBack();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_photo, container, false);
+        View root = inflater.inflate(R.layout.fragment_add_photo, container, false);
+
+        ImageView img = (ImageView)root.findViewById(R.id.photo_add_preview);
+        img.setImageBitmap(PhotoUtils.getThumbnailFromUrl(photos.get(0), PhotoUtils.dpToPx(this.getResources().getDisplayMetrics(), 150)));
+        return root;
     }
 
     @Override

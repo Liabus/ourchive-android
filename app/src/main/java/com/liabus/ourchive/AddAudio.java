@@ -1,6 +1,7 @@
 package com.liabus.ourchive;
 
 import android.app.Activity;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.os.Environment;
 import android.widget.Button;
@@ -61,12 +62,10 @@ public class AddAudio extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_add_audio, container, false);
 
-        Button recordBtn = (Button) root.findViewById(R.id.record_btn);
-        Button addStreamBtn = (Button) root.findViewById(R.id.add_stream_btn);
-        Button playBtn = (Button) root.findViewById(R.id.play_btn);
+        ImageButton recordBtn = (ImageButton) root.findViewById(R.id.record_btn);
+        ImageButton playBtn = (ImageButton) root.findViewById(R.id.play_btn);
 
         recordBtn.setOnClickListener(recordPressed);
-        addStreamBtn.setOnClickListener(addStreamPressed);
         playBtn.setOnClickListener(playPressed);
 
         return root;

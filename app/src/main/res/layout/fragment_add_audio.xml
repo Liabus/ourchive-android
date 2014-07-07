@@ -18,33 +18,51 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal">
 
-        <Button
+        <ImageButton
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Play"
+            android:layout_height="100dp"
+            android:id="@+id/cancel_btn_audio"
+            android:layout_marginTop="25dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/iconx"
+            android:scaleType="centerInside"
+            android:background="@null"
+            android:layout_marginRight="0dp" />
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="100dp"
             android:id="@+id/play_btn"
             android:layout_marginTop="25dp"
             android:layout_weight="1"
-            android:layout_marginLeft="25dp" />
-
-        <Button
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/recordplay"
+            android:scaleType="centerInside"
+            android:background="@null"
+            android:layout_marginRight="15dp" />
+        <ImageButton
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Add to Stream"
-            android:id="@+id/add_stream_btn"
+            android:layout_height="100dp"
+            android:id="@+id/submit_btn_audio"
             android:layout_marginTop="25dp"
-            android:layout_weight="1"
-            android:layout_marginRight="25dp" />
+            android:layout_marginLeft="0dp"
+            android:src="@drawable/iconcheck"
+            android:scaleType="centerInside"
+            android:background="@null"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1" />
+
     </LinearLayout>
 
-    <Button
+    <ImageButton
         android:layout_width="125dp"
-        android:layout_height="wrap_content"
+        android:layout_height="125dp"
         android:text="Record"
         android:id="@+id/record_btn"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.30"
-        android:layout_marginTop="125dp"
-        android:onClick=""/>
+        android:layout_marginTop="20dp"
+        android:src="@drawable/recordstart"
+        android:background="@null"
+        android:scaleType="centerInside" />
 
 </LinearLayout>

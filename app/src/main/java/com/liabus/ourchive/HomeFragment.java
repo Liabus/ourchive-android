@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 /**
  * Created by jack on 7/5/14.
@@ -94,16 +94,16 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
-        Button photoButton = (Button) root.findViewById(R.id.add_photo_btn);
+        ImageButton photoButton = (ImageButton) root.findViewById(R.id.add_photo_btn);
         photoButton.setOnClickListener(photoLauncher);
 
-        Button audioButton = (Button) root.findViewById(R.id.add_audio_btn);
+        ImageButton audioButton = (ImageButton) root.findViewById(R.id.add_audio_btn);
         audioButton.setOnClickListener(fragmentSwap);
 
-        Button videoButton = (Button) root.findViewById(R.id.add_video_btn);
+        ImageButton videoButton = (ImageButton) root.findViewById(R.id.add_video_btn);
         videoButton.setOnClickListener(fragmentSwap);
 
-        Button textButton = (Button) root.findViewById(R.id.add_text_btn);
+        ImageButton textButton = (ImageButton) root.findViewById(R.id.add_text_btn);
         textButton.setOnClickListener(fragmentSwap);
 
         return root;

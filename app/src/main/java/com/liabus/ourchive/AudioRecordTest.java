@@ -28,6 +28,7 @@ public class AudioRecordTest
     public static MediaPlayer   mPlayer = null;
 
     public static void startPlaying() {
+
         mPlayer = new MediaPlayer();
         try {
             mPlayer.setDataSource(mFileName);
@@ -44,6 +45,9 @@ public class AudioRecordTest
     }
 
     public static void startRecording() {
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName += "/audiorecordtest.3gp";
+
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -63,11 +67,6 @@ public class AudioRecordTest
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
-    }
-
-    public AudioRecordTest() {
-        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";
     }
 
 }

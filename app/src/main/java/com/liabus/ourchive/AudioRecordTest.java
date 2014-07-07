@@ -15,6 +15,7 @@ import android.media.MediaRecorder;
 import android.media.MediaPlayer;
 
 import java.io.IOException;
+import java.util.EventListener;
 
 /**
  * Created by jack on 7/5/14.
@@ -29,53 +30,55 @@ public class AudioRecordTest
 
     private boolean recording = false;
 
-    public boolean isPlaying(){
+    public boolean statePlay(){
         return mPlayer.isPlaying();
     }
-    public boolean isRecording(){
+    public boolean stateRecord(){
         return recording;
     }
 
-    public void startPlaying() {
 
-        mPlayer = new MediaPlayer();
-        try {
-            mPlayer.setDataSource(mFileName);
-            mPlayer.prepare();
-            mPlayer.start();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "play prepare() failed");
+
+    public void playToggle() {
+        if (mPlayer == null || !mPlayer.isPlaying()) {
+            mPlayer = new MediaPlayer();
+            try {
+                mPlayer.setDataSource(mFileName);
+                mPlayer.prepare();
+                mPlayer.start();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "play prepare() failed");
+            }
+        } else {
+            mPlayer.release();
+            mPlayer = null;
         }
     }
 
-    public void stopPlaying() {
-        mPlayer.release();
-        mPlayer = null;
-    }
+    public void recordToggle() {
+        if (!recording) {
+            mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+            mFileName += "/audiorecordtest.3gp";
+            mRecorder = new MediaRecorder();
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mRecorder.setOutputFile(mFileName);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
-    public void startRecording() {
-        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";
+            try {
+                mRecorder.prepare();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "record prepare() failed");
+            }
 
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-        try {
-            mRecorder.prepare();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "record prepare() failed");
+            mRecorder.start();
+            recording = true;
+        } else {
+            mRecorder.stop();
+            mRecorder.reset();
+            mRecorder.release();
+            mRecorder = null;
+            recording = false;
         }
-
-        mRecorder.start();
     }
-
-    public void stopRecording() {
-        mRecorder.stop();
-        mRecorder.release();
-        mRecorder = null;
-    }
-
 }

@@ -35,20 +35,10 @@ public class AddAudio extends Fragment {
         }
     }
 
-    private boolean isRecording = false;
-
-    private boolean isPlaying = false;
-
     private OnClickListener recordPressed = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!isRecording) {
-                recorder.startRecording();
-                isRecording = true;
-            } else {
-                recorder.stopRecording();
-                isRecording = false;
-            }
+            recorder.recordToggle();
         }
     };
 
@@ -61,14 +51,7 @@ public class AddAudio extends Fragment {
     private OnClickListener playPressed = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!isPlaying) {
-                recorder.startPlaying();
-                isPlaying = true;
-            }
-            else {
-                recorder.stopPlaying();
-                isPlaying = false;
-            }
+            recorder.playToggle();
         }
     };
 

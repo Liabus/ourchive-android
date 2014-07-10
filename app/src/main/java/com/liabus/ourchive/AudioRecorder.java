@@ -21,10 +21,10 @@ import java.util.EventListener;
  * Created by jack on 7/5/14.
  */
 
-public class AudioRecordTest
+public class AudioRecorder
 {
     public final String LOG_TAG = "AudioRecordTest";
-    public String mFileName = null;
+    public String fileName = null;
     public MediaRecorder mRecorder = null;
     public MediaPlayer mPlayer = null;
 
@@ -43,7 +43,7 @@ public class AudioRecordTest
         if (mPlayer == null || !mPlayer.isPlaying()) {
             mPlayer = new MediaPlayer();
             try {
-                mPlayer.setDataSource(mFileName);
+                mPlayer.setDataSource(fileName);
                 mPlayer.prepare();
                 mPlayer.start();
             } catch (IOException e) {
@@ -57,12 +57,12 @@ public class AudioRecordTest
 
     public void recordToggle() {
         if (!recording) {
-            mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-            mFileName += "/audiorecordtest.3gp";
+            fileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+            fileName += "/audiorecordtest.3gp";
             mRecorder = new MediaRecorder();
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mRecorder.setOutputFile(mFileName);
+            mRecorder.setOutputFile(fileName);
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
             try {

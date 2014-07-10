@@ -148,10 +148,17 @@ public class Home extends Activity
                 mTitle = "Text";
                 frag = new AddText();
                 break;
+
             case 5:
                 mTitle = "Audio";
                 frag = new AddAudio();
                 break;
+            case 500:
+                mTitle = "Audio";
+                frag = UploadAudio.newInstance(dataCache);
+                dataCache = null;
+                break;
+
             case 6:
                 mTitle = "New Event";
                 frag = new NewEvent();

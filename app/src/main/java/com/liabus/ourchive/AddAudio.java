@@ -2,26 +2,17 @@ package com.liabus.ourchive;
 
 import android.app.Activity;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.os.Environment;
-import android.widget.Button;
 import android.view.View.OnClickListener;
-import android.content.Context;
-import android.util.Log;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.media.MediaRecorder;
-import android.media.MediaPlayer;
-
-import java.io.IOException;
 
 
 public class AddAudio extends Fragment {
 
-    AudioRecordTest recorder = null;
+    AudioRecorder recorder = null;
 
     public AddAudio() {
         // Required empty public constructor
@@ -32,7 +23,7 @@ public class AddAudio extends Fragment {
         super.onCreate(savedInstanceState);
 
         if(recorder == null){
-            recorder = new AudioRecordTest();
+            recorder = new AudioRecorder();
         }
     }
 
@@ -53,8 +44,7 @@ public class AddAudio extends Fragment {
     private OnClickListener acceptSubmit = new OnClickListener() {
         @Override
         public void onClick(View v) {
-
-
+            ((Home) getActivity()).gracefulAdvanceWithData(500, recorder.fileName);
         }
     };
 
@@ -74,8 +64,11 @@ public class AddAudio extends Fragment {
         ImageButton recordBtn = (ImageButton) root.findViewById(R.id.record_btn);
         ImageButton playBtn = (ImageButton) root.findViewById(R.id.play_btn);
 
+        ImageButton acceptSubmitBtn = (ImageButton) root.findViewById(R.id.submit_btn_audio);
+
         recordBtn.setOnClickListener(recordPressed);
         playBtn.setOnClickListener(playPressed);
+        acceptSubmitBtn.setOnClickListener(acceptSubmit);
 
         return root;
     }

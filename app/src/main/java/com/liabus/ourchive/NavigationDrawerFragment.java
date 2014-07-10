@@ -201,6 +201,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     //Perform menu selection without calling the callback:
     public void popItem(){
+
         if(positionStack.empty() || positionStack.size() == 1){
             //TODO: Implement empty
             return;
@@ -215,6 +216,11 @@ public class NavigationDrawerFragment extends Fragment {
         if(mCallbacks != null) {
             mCallbacks.onNavigationDrawerBack(mCurrentSelectedPosition);
         }
+    }
+
+    public void gracefulPush(int position){
+        System.out.println("Position " + position);
+        positionStack.push(position);
     }
 
     public void selectItem(int position) {

@@ -33,10 +33,11 @@ public class PhotoUtils {
             width = max;
         }
 
-
         bm = Bitmap.createScaledBitmap(bm, width, height, true);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+        //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        //bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
         return bm;
     }
 

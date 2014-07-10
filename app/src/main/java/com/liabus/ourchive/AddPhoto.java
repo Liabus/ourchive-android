@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -29,10 +30,11 @@ public class AddPhoto extends Fragment {
 
     private ArrayList<String> photos;
 
-    public static AddPhoto newInstance(ArrayList<String> photosParam) {
+    public static AddPhoto newInstance(Object photosParam) {
+        ArrayList<String> pp = (ArrayList<String>)photosParam;
         AddPhoto fragment = new AddPhoto();
         Bundle args = new Bundle();
-        args.putStringArrayList(ARG_PARAM1, photosParam);
+        args.putStringArrayList(ARG_PARAM1, pp);
         fragment.setArguments(args);
         return fragment;
     }

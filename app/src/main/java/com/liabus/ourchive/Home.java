@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -47,6 +48,16 @@ public class Home extends Activity
 
     public void navigationDrawerHelper(int position){
         mNavigationDrawerFragment.selectItem(position);
+    }
+
+    //Allow fragments to advance without custom listeners:
+    public void gracefulAdvanceWithData(int position, Object data){
+        dataCache = data;
+        gracefulAdvance(position);
+    }
+    public void gracefulAdvance(int position){
+        mNavigationDrawerFragment.gracefulPush(position);
+        onNavigationDrawerItemSelected(position);
     }
 
     //Allow fragments to go back:
@@ -107,6 +118,8 @@ public class Home extends Activity
                 mTitle = "My Ourchive";
                 frag = new MyOurchive();
                 break;
+
+
             //Photo Launcher:
             case 2:
                 photoLauncher();
@@ -115,10 +128,18 @@ public class Home extends Activity
             //When Photo Launcher Completes:
             case 200:
                 mTitle = "Photos";
-                frag = AddPhoto.newInstance(listCache);
-                //Dereference listCache for GC:
-                listCache = null;
+                frag = PhotoSelectFragment.newInstance(dataCache);
+                //Dereference dataCache for GC:
+                dataCache = null;
                 break;
+            case 201:
+                mTitle = "Photos";
+                frag = AddPhoto.newInstance(dataCache);
+                //Dereference dataCache for GC:
+                dataCache = null;
+                break;
+
+
             case 3:
                 mTitle = "Video";
                 frag = new AddVideo();
@@ -154,7 +175,7 @@ public class Home extends Activity
     }
 
     //We keep a cache so we can pass things around easily:
-    ArrayList<String> listCache = null;
+    Object dataCache = null;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -162,7 +183,7 @@ public class Home extends Activity
             //Photo Launcher:
             case 723:
                 if(resultCode == RESULT_OK) {
-                    listCache = data.getStringArrayListExtra("photos");
+                    dataCache = data.getStringArrayListExtra("photos");
                     onNavigationDrawerItemSelected(200);
                 }else{
                     mNavigationDrawerFragment.popItem();

@@ -43,12 +43,21 @@ public class AddAudio extends Fragment {
         }
     };
 
-    private OnClickListener addStreamPressed = new OnClickListener() {
+    private OnClickListener cancelSubmit = new OnClickListener() {
         @Override
         public void onClick(View v) {
 
         }
     };
+
+    private OnClickListener acceptSubmit = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+
+        }
+    };
+
     private OnClickListener playPressed = new OnClickListener() {
         @Override
         public void onClick(View v) {
